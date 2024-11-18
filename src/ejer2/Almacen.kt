@@ -5,41 +5,60 @@ class Almacen {
     private val bebidas = mutableListOf<Bebidas>()
 
     fun agregarBebida(bebida: Bebidas) {
-        if (bebidas.any { it.id == bebida.id }) {
-            println("ese id ya exixte ")
-        } else {
-            //busca sitio vacio
-            for (i in 0..<5) {
-                for (j in 0..<5) {
-                    //si encuenta sitio vacio lo coloca ahi
-                    if (estanteria[i][j] == null) {
-                        estanteria[i][j] = bebida
+        var yaExiste=false
+        for(b in bebidas){
+            if(b.id==bebida.id){
+                yaExiste=true
+                break
+            }
+        }
+        if (yaExiste){
+            print("ya exixte")
+        }else{
+            var sitio=false
+            for(i in 0 until 5){
+                for(j in 0 until 5){
+                    if (estanteria[i][j]==null){
+                        estanteria[i][j]=bebida
                         bebidas.add(bebida)
-                        println("la bebida esta ahi[$i][$j].")
-                        return
+                        println("bebida colocada en [$i][$j]")
+                        sitio=true
+                        break
                     }
                 }
+                if (sitio)break
             }
-            println("no hay espacio")
+            if (!sitio){
+                println("todo ocupado")
+            }
         }
     }
 
     fun eliminarBebida(id: Int) {
-        val bebida = bebidas.find { it.id == id }
-        if (bebida != null) {
-            bebidas.remove(bebida)
-            for (i in 0..<5) {
-                //busca donde estaba la bebida y la quita de la estanteria
-                for (j in 0..<5) {
+        var tenemosBebida: Bebidas? = null
+        // buscamos la bebida
+        for (bebida in bebidas) {
+            if (bebida.id == id) {
+                tenemosBebida = bebida
+                break
+            }
+        }
+
+        if (tenemosBebida != null) {
+            //si hay la quitamos
+            bebidas.remove(tenemosBebida)
+            // y tambien la quitamos de la estanteria
+            for (i in 0 until 5) {
+                for (j in 0 until 5) {
                     if (estanteria[i][j]?.id == id) {
                         estanteria[i][j] = null
-                        println("bebida quitada")
+                        println("bebida quitada de la estantería")
                         return
                     }
                 }
             }
         } else {
-            println("no exixte")
+            println("no hayuna bebida con ese ID")
         }
     }
 
@@ -48,44 +67,55 @@ class Almacen {
         println("lista")
         for (bebida in bebidas) {
             //mira que bebida es y te pone los datos
-            when (bebida) {
-                is AguaMineral -> println("agua mineral - ID: ${bebida.id}, marca: ${bebida.marca}, litros: ${bebida.litros}, precio: \$${bebida.precio}, origen: ${bebida.origen}")
-                is BebidasAzucaradas -> println("bebida azucarada - ID: ${bebida.id}, marca: ${bebida.marca}, litros: ${bebida.litros}, precio: \$${bebida.precio}, azúcar: ${bebida.azucar}g, promoción: ${bebida.promocion}")
+            if (bebida is AguaMineral) {
+                println("Agua Mineral - ID: ${bebida.id}, Marca: ${bebida.marca}, Litros: ${bebida.litros}, Precio: $${bebida.precio}, Origen: ${bebida.origen}")
+            } else if (bebida is BebidasAzucaradas) {
+                println("Bebida Azucarada - ID: ${bebida.id}, Marca: ${bebida.marca}, Litros: ${bebida.litros}, Precio: $${bebida.precio}, Azúcar: ${bebida.azucar}g, Promoción: ${bebida.promocion}")
             }
         }
     }
 
     fun precioTotal(): Double {
-        return bebidas.sumOf {
-            //te hace descuento si esta en descuento
-            if (it is BebidasAzucaradas && it.promocion) {
-                it.precio * 0.9
+        var total = 0.0
+        for (bebida in bebidas) {
+            if (bebida is BebidasAzucaradas && bebida.promocion) {
+                // Si es una bebida azucarada en promoción, aplicamos 10% de descuento
+                total += bebida.precio * 0.9
             } else {
-                it.precio
+                total += bebida.precio
             }
         }
+        return total
     }
 
     fun precioMarca(marca: String): Double {
-        // te suma el precio de solo las bebidas de la maraca que mandes
-        return bebidas.filter { it.marca == marca }.sumOf {
-            if (it is BebidasAzucaradas && it.promocion) {
-                it.precio * 0.9
-            } else {
-                it.precio
+        var total = 0.0
+        for (bebida in bebidas) {
+            if (bebida.marca == marca) {
+                if (bebida is BebidasAzucaradas && bebida.promocion) {
+                    // Si es una bebida azucarada en promoción, aplicamos 10% de descuento
+                    total += bebida.precio * 0.9
+                } else {
+                    total += bebida.precio
+                }
             }
         }
+        return total
     }
 
     fun precioColumna(columna: Int): Double {
-        return estanteria.sumOf {
-            it[columna]?.let {
-                if (it is BebidasAzucaradas && it.promocion) {
-                    it.precio * 0.1
+        var total = 0.0
+        for (i in 0 until 5) {
+            val bebida = estanteria[i][columna]
+            if (bebida != null) {
+                if (bebida is BebidasAzucaradas && bebida.promocion) {
+                    // Si es una bebida azucarada en promoción, aplicamos 10% de descuento
+                    total += bebida.precio * 0.9
                 } else {
-                    it.precio
+                    total += bebida.precio
                 }
-            } ?: 0.0
+            }
         }
+        return total
     }
 }
