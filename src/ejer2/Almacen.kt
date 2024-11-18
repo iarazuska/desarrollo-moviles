@@ -49,8 +49,8 @@ class Almacen {
         for (bebida in bebidas) {
             //mira que bebida es y te pone los datos
             when (bebida) {
-                is AguaMineral -> println("agua mineral - ID: ${bebida.id}, Marca: ${bebida.marca}, Litros: ${bebida.litros}, Precio: \$${bebida.precio}, Origen: ${bebida.origen}")
-                is BebidasAzucaradas -> println("bebida azucarada - ID: ${bebida.id}, Marca: ${bebida.marca}, Litros: ${bebida.litros}, Precio: \$${bebida.precio}, Azúcar: ${bebida.azucar}g, Promoción: ${bebida.promocion}")
+                is AguaMineral -> println("agua mineral - ID: ${bebida.id}, marca: ${bebida.marca}, litros: ${bebida.litros}, precio: \$${bebida.precio}, origen: ${bebida.origen}")
+                is BebidasAzucaradas -> println("bebida azucarada - ID: ${bebida.id}, marca: ${bebida.marca}, litros: ${bebida.litros}, precio: \$${bebida.precio}, azúcar: ${bebida.azucar}g, promoción: ${bebida.promocion}")
             }
         }
     }
